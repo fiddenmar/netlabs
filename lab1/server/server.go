@@ -15,6 +15,10 @@ func CheckError(err error) {
     }
 }
 
+func getCurrTime() string {
+	return time.Now().Format(time.RFC850)
+}
+
 type Server struct {
 	listenPort int
 	broadcastPort int
@@ -54,11 +58,11 @@ func (server *Server) Listen() {
         if n > 0 {
 	        var message string
 	        if _, ok := server.userList[addr.IP.String()]; ok {
-	        	fmt.Println("Received ", string(buf[0:n]), " from ", addr, " at ", time.Now())
-	        	message = server.userList[addr.IP.String()] + " said at " + time.Now().String() + ": " + string(buf[0:n])
+	        	fmt.Println("Received", string(buf[0:n]), "from", server.userList[addr.IP.String()], "(", addr.IP.String() ,") at", getCurrTime())
+	        	message = server.userList[addr.IP.String()] + " said at " + getCurrTime() + ": " + string(buf[0:n])
 	        } else {
 	        	server.userList[addr.IP.String()] = string(buf[0:n])
-	        	message = "User " + string(buf[0:n]) + " (" + addr.IP.String() + ") joined at " + time.Now().String()
+	        	message = "User " + string(buf[0:n]) + " (" + addr.IP.String() + ") joined at " + getCurrTime()
 	        	fmt.Println(message)
 	        }
 	        server.messages <- message

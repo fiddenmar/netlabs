@@ -1,4 +1,4 @@
-package main
+package client
 
 import (
 	"fmt"
@@ -18,14 +18,6 @@ type Client struct {
 	answerPort int
 	login string
 	Answers chan string
-}
-
-func main() {
-	var client Client
-	client.Init("User", "127.0.0.1", 34310)
-	go client.Answer()
-	client.Connect()
-	client.Send("Hello message")
 }
 
 func (client *Client) Init(_login string, _sendIP string, _sendPort int) {

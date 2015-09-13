@@ -24,7 +24,12 @@ func main() {
 		time.Sleep(1*time.Second)
 		c.List()
 		time.Sleep(1*time.Second)
+		c.Message("Hello world!3")
+		time.Sleep(1*time.Second)
+		c.Message("Hello world!4")
+		time.Sleep(1*time.Second)
 		c.Leave()
+		time.Sleep(2*time.Second)
 		os.Exit(0)
 	}()
 	for {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"strconv"
+	"time"
 )
 
 func CheckError(err error) {
@@ -40,15 +41,17 @@ type Client struct {
 	sendPort int
 	answerPort int
 	login string
+	pending chan bool
 	Answers chan string
 }
 
-func (client *Client) Init(_login string, _sendIP string, _sendPort int) {
+func (client *Client) Init(_login string, _sendIP string, _sendPort int, _answers chan string) {
 	client.sendPort = _sendPort
 	client.answerPort = client.sendPort + 1
 	client.sendIP = _sendIP
 	client.login = _login
-	client.Answers = make(chan string, 100)
+	client.pending = make(chan bool, 100)
+	client.Answers = _answers
 }
 
 func (client *Client) Register() {
@@ -93,6 +96,7 @@ func (client *Client) send(header MessageHeader, message string) {
 	buf := []byte(header.ToString() + message)
 	_, err = Conn.Write(buf)
 	CheckError(err)
+	client.pending <- true
 }
 
 func (client *Client) Answer() {
@@ -104,10 +108,19 @@ func (client *Client) Answer() {
     buf := make([]byte, 1024)
 
     for {
+    	<- client.pending
+    	var ans string
+    	AnswerConn.SetDeadline(time.Now().Add(1*time.Second))
 	    n, _, err := AnswerConn.ReadFromUDP(buf)
-	    CheckError(err)
-	    ans := string(buf[0:n])
-	    fmt.Println(ans)
+	    switch e := err.(type) {
+		case net.Error:
+		    if e.Timeout() {
+		        ans = "Timeout error: check your internet connection"
+		    }
+		default:
+			CheckError(err)
+		    ans = string(buf[0:n])
+		}
 	    client.Answers <- ans
 	}
 }

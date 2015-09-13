@@ -45,7 +45,7 @@ func (client *Client) Send(message string) {
 	CheckError(err)
 }
 
-func (client *Client) Answer() (message string) {
+func (client *Client) Answer() {
 	AnswerAddr,err := net.ResolveUDPAddr("udp", ":"+strconv.Itoa(client.answerPort))
     CheckError(err)
     AnswerConn, err := net.ListenUDP("udp", AnswerAddr)
@@ -57,6 +57,7 @@ func (client *Client) Answer() (message string) {
 	    n, _, err := AnswerConn.ReadFromUDP(buf)
 	    CheckError(err)
 	    ans := string(buf[0:n])
+	    fmt.Println(ans)
 	    client.Answers <- ans
 	}
 }

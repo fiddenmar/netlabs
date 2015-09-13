@@ -41,7 +41,7 @@ func (server *Server) Init(_listenPort int) {
 	server.broadcastPort = server.listenPort + 1
 	server.userList = nil
 	server.userList = make(map[string]string)
-	server.messages = make(chan string)
+	server.messages = make(chan string, 100)
 }
 
 func (server *Server) Listen() {

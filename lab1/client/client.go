@@ -25,7 +25,7 @@ func (client *Client) Init(_login string, _sendIP string, _sendPort int) {
 	client.answerPort = client.sendPort + 1
 	client.sendIP = _sendIP
 	client.login = _login
-	client.Answers = make(chan string)
+	client.Answers = make(chan string, 100)
 }
 
 func (client *Client) Connect() {

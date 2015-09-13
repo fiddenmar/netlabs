@@ -13,6 +13,7 @@ func main() {
 		c.Connect()
 		c.Send("Hello message")
 	}()
-	
-	fmt.Println(<-c.Answers)
+	for {
+		fmt.Println(<-c.Answers)
+	}
 }

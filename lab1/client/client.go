@@ -76,7 +76,7 @@ func (client *Client) Private(receiver string, message string) {
 	var header MessageHeader
 	header.Type = PRIVATE
 	header.Extra = receiver
-	client.send(header, message)
+	client.send(header, " "+message)
 }
 
 func (client *Client) Leave() {
@@ -110,7 +110,7 @@ func (client *Client) Answer() {
     for {
     	<- client.pending
     	var ans string
-    	AnswerConn.SetDeadline(time.Now().Add(1*time.Second))
+    	AnswerConn.SetDeadline(time.Now().Add(3*time.Second))
 	    n, _, err := AnswerConn.ReadFromUDP(buf)
 	    switch e := err.(type) {
 		case net.Error:

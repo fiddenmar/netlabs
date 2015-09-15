@@ -5,6 +5,7 @@ import (
 	"net"
 	"strconv"
 	"time"
+	"runtime"
 )
 
 func CheckError(err error) {
@@ -50,7 +51,7 @@ func (client *Client) Init(_login string, _sendIP string, _sendPort int, _answer
 	client.answerPort = client.sendPort + 1
 	client.sendIP = _sendIP
 	client.login = _login
-	client.pending = make(chan bool, 100)
+	client.pending = make(chan bool)
 	client.Answers = _answers
 }
 
@@ -100,6 +101,7 @@ func (client *Client) send(header MessageHeader, message string) {
 }
 
 func (client *Client) Answer() {
+	runtime.LockOSThread()
 	AnswerAddr,err := net.ResolveUDPAddr("udp", ":"+strconv.Itoa(client.answerPort))
     CheckError(err)
     AnswerConn, err := net.ListenUDP("udp", AnswerAddr)

@@ -96,8 +96,10 @@ func (server *Server) handleMessage(n int, addr *net.UDPAddr, received string) {
     		fmt.Println("Received private message to", rcvr, msg, "from", server.userList[addr.IP.String()], "(", addr.IP.String() ,") at", getCurrTime())
     		if rcvrIp, found := server.findUser(rcvr); found {
     			message= rcvrIp + " " + server.userList[addr.IP.String()] + " privately said at " + getCurrTime() + ": " + msg
-    			toSender:= addr.IP.String() + " " + server.userList[addr.IP.String()] + " privately said at " + getCurrTime() + ": " + msg
-    			server.private <- toSender
+    			if rcvr!=server.userList[addr.IP.String()] {
+    				toSender:= addr.IP.String() + " " + server.userList[addr.IP.String()] + " privately said at " + getCurrTime() + ": " + msg
+    				server.private <- toSender
+    			}
 			} else {
 				message= addr.IP.String() + " " + "User " + rcvr + " was not found"
 				fmt.Println("User " + rcvr + " was not found")
